@@ -1,59 +1,59 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+
 typedef long long ll;
-const int maxX = 1e6+1;
 
-ll ans;
-int N, dp[maxX];
-bool b[maxX];
-vector<int> primes;
+const int L = 1e6 + 7;
 
-void init(){
-    fill(b+2, b+maxX, true);
-    for(int i = 2; i*i < maxX; i++)
-        if(b[i])
-            for(int j = i*i; j < maxX; j += i)
-                b[j] = false;
-    for(int i = 2; i < maxX; i++)
-        if(b[i])
-            primes.push_back(i);
-}
+ll divs[L];
 
-void compute(int x){
-    vector<int> pf;
-    for(int p : primes){
-        if(x == 1)  break;
-        else if(b[x]){
-            pf.push_back(x);
-            break;
+int main()
+{
+    ios_base::sync_with_stdio(0);
+    cin.tie(NULL);
+
+    // sieve
+    vector<int> spf(L);
+    // spf[1] = 1;
+    for (int i = 2; i <= L; i++){
+        if (spf[i] == 0){
+            for (int j = i; j <= L; j += i){
+                if (spf[j] == 0)
+                    spf[j] = i;
+            }
+        }
+    }
+    int n;
+    cin >> n;
+    //Important (ll) n!!!
+    ll pairs = (ll)n * (n - 1) / 2;
+
+    ll cnt = 0;
+    for (int num = 0; num < n; num++){
+        int x;
+        cin >> x;
+
+        vector<int> primes;
+        primes.clear();
+        while (x > 1){
+            int num = spf[x];
+            primes.push_back(num);
+            while(x % num == 0)x/=num;
         }
 
-        if(x % p)   continue;
-        pf.push_back(p);
-        while(x % p == 0)
-            x /= p;
+        // bit mask PIE
+        ll s = primes.size();
+        for (int mask = 1; mask < (1 << s); mask++){
+            int prod = 1;
+            for (long k = 0; k < s; k++){
+                if (mask & (1 << k)){
+                    prod *= primes[k];
+                }
+            }
+            cnt += (__builtin_popcount(mask) & 1 ? divs[prod] : -divs[prod]);//*(divs[prod]>1);
+            divs[prod]++;
+        }
     }
-
-    int K = (int) pf.size();
-    for(int mask = 0; mask < (1<<K); mask++){
-        int mu = 1;
-        for(int i = 0; i < K; i++)
-            if(mask&(1<<i))
-                mu *= pf[i];
-
-        int k = __builtin_popcount(mask);
-        ans += (k&1 ? -dp[mu] : dp[mu]);
-        dp[mu]++;
-    }
-}
-
-int main(){
-    init();
-    scanf("%d", &N);
-    for(int i = 0, x; i < N; i++){
-        scanf("%d", &x);
-        compute(x);
-    }
-    printf("%lld\n", ans);
+    cout << pairs - cnt;
 }
