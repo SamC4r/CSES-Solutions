@@ -1,6 +1,6 @@
 # CSES Solutions
 
-Over 280 accepted solutions to the [CSES Problem Set](https://cses.fi/problemset/), written in C++ by Jonathan Uy [(nulltype)](https://cses.fi/user/22919). As of December 23th, the following number of solutions have been completed:
+The following number of solutions have been completed:
 
 | Problem Type          | Number Solved |
 |-----------------------|:-------------:|
